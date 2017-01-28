@@ -4,6 +4,8 @@ var fs = require('fs');
 var express = require('express');
 var pug = require('pug');
 
+var session = require('express-session');
+
 var passport = require('passport');
 var passportFacebook = require('passport-facebook');
 
@@ -11,15 +13,20 @@ const APP_BASE_PATH = __dirname;
 var CONTROLLER_PATH = APP_BASE_PATH + '/controllers';
 
 var DB_CONFIG = require(APP_BASE_PATH + '/config/config.json')[process.env.NODE_ENV];
+var APP_CONFIG = require(APP_BASE_PATH + '/config/app.json');
 
 var models = require('./models');
 
 // Set up authentication.
 passport.use(new passportFacebook.Strategy({
-	clientID: 'todo',
-	clientSecret: 'todo',
-	callbackURL: 'todo'
+	clientID: APP_CONFIG["FACEBOOK_APP_ID"],
+	clientSecret: APP_CONFIG["FACEBOOK_APP_SECRET"],
+	callbackURL: '/auth/facebook/callback'
 }, function (accessToken, refreshToken, profile, done) {
+	console.log({where: {facebook_id: profile.id}, defaults: {display_name: profile.displayName}}.where);
+	models.User.findOrCreate({where: {facebook_id: profile.id}, defaults: {display_name: profile.displayName}}).spread(function (user, created) {
+		done(null, user)
+	});
 	// FIND OR CREATE USER!!!
 }));
 
@@ -27,11 +34,32 @@ var app = express();
 var appServer = http.createServer(app);
 var appRouter = express.Router();
 
+var sessionMiddleware = session({
+	secret: APP_CONFIG["SESSION_SECRET"],
+	resave: false,
+	saveUninitialized: false
+});
+
 // Set up views.
 app.set('view engine', 'pug');
 app.set('views', APP_BASE_PATH + '/views');
 
+app.use(sessionMiddleware);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/', appRouter);
+
+// Convert a user object to its serialized form.
+passport.serializeUser(function (user, done) {
+	done(null, user.id);
+});
+// Convert a user's serialized form to an object.
+passport.deserializeUser(function (id, done) {
+	models.User.findOne({ where: { id: id }}).then(function (user) {
+		done(null, user);
+	});
+});
 
 // Load all JavaScript files in the controller directory as controller objects.
 fs.readdirSync(CONTROLLER_PATH).filter(function (file) {
