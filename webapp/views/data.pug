@@ -2,3 +2,8 @@ extends base
 
 block content
     p Data
+
+    form(method='post', action='/data/upload', enctype='multipart/form-data')
+        input(type='file', name='data')
+        br
+        button(type='submit') Upload

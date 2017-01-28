@@ -75,7 +75,8 @@ fs.readdirSync(CONTROLLER_PATH).filter(function (file) {
 		router: appRouter,
 		passport: passport,
 		models: models,
-		dbConfig: DB_CONFIG
+		dbConfig: DB_CONFIG,
+		APP_BASE_PATH: APP_BASE_PATH
 	});
 });
 
