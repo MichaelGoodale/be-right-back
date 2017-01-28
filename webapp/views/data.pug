@@ -1,9 +1,38 @@
 extends base
 
-block content
-    p Data
+block scripts
+	script(type='text/javascript').
+		$(function () {
+			$('#form-upload-data').submit(function (event) {
+				event.preventDefault();
+				$('#submit-upload-data').attr('disabled', true);
 
-    form(method='post', action='/data/upload', enctype='multipart/form-data')
-        input(type='file', name='data')
-        br
-        button(type='submit') Upload
+				//noinspection NodeModulesDependencies
+				$.ajax({
+					url: '/data/upload',
+					method: 'POST',
+					data: new FormData(this),
+					processData: false,
+					contentType: false,
+
+					success: function (data) {
+						console.log(data);
+						$('#submit-upload-data').attr('disabled', false);
+					},
+
+					error: function (data) {
+						console.error(data);
+						// TODO: Some error handling
+						$('#submit-upload-data').attr('disabled', false);
+					}
+				});
+			});
+		});
+
+block content
+	p Data
+
+	form(method='post', action='/data/upload', enctype='multipart/form-data')#form-upload-data
+		input(type='file', name='data')
+		br
+		button(type='submit')#submit-upload-data Upload

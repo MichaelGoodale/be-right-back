@@ -4,5 +4,23 @@ html
         title Be Right Back
 
         meta(charset='utf-8')
+
+        link(rel='stylesheet', href='/stylesheets/reset.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+
+        script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
+
+        block scripts
     body
-        block content
+        header
+            h1
+                a(href='/') Title Here
+            nav
+                if user
+                    ul
+                        li
+                            a(href='/data') Data
+                        li
+                            a(href='/sign_out') Sign Out (#{user.display_name})
+        main
+            block content
