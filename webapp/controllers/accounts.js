@@ -6,4 +6,9 @@ module.exports.controller = function (objects) {
 	objects.router.get('/authenticated', function (req, res) {
 
 	});
+
+	objects.router.get('/sign_out', function (req, res) {
+		req.logout();
+		res.redirect('/');
+	});
 };
