@@ -5,6 +5,7 @@ var path = require('path');
 var express = require('express');
 var pug = require('pug');
 
+var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var passport = require('passport');
@@ -45,6 +46,10 @@ var sessionMiddleware = session({
 // Set up views.
 app.set('view engine', 'pug');
 app.set('views', path.join(APP_BASE_PATH, 'views'));
+
+// Needed to parse Messenger requests.
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.json());
 
 app.use(sessionMiddleware);
 app.use(passport.initialize());

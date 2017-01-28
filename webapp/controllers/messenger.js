@@ -17,7 +17,6 @@ module.exports.controller = function(objects) {
 			data.entry.forEach(function (entry) {
 				var pageID = entry.id;
 				var timeOfEvent = entry.time;
-				var message = event.message;
 
 				//noinspection JSUnresolvedVariable
 				entry.messaging.forEach(function (event) {
