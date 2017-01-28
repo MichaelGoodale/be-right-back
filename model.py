@@ -65,8 +65,11 @@ for i in range(11):
 sess=tf.Session()
 sess.run(tf.global_variables_initializer())
 sess.run(train_ops[0], feed_dict=feed_dict)
+for i in range(100):
+	sess.run(train_ops[0], feed_dict=feed_dict)
+	print(i)
 output = sess.run(outputs[0], feed_dict=feed_dict)
-sentence = [int(np.argmax(i, axis=1) for i in output)]
+sentence = [int(np.argmax(i, axis=1)) for i in output]
 print(sentence)
 
 #for bucket in range(len(BUCKETS))
