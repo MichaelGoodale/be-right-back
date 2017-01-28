@@ -1,11 +1,17 @@
 from bs4 import BeautifulSoup
-import sys
+import sys, json
 import pprint 
 
+#input facebook ID number and display name
+def read_in():
+	lines = sys.stdin.readlines()
+	return json.loads(lines[0])
 
+# example input: { "facebook_id": "100000757823244", "display_name": "Aidon Lebar" }
+userIn = read_in() # format: { facebook_id: '348264782638746', display_name: 'David Lougheed' }
 
-
-targetName = "Aidon Lebar"
+clientName = userIn["display_name"]
+clientID = userIn["facebook_id"]
 
 convos = {}
 
@@ -26,15 +32,16 @@ for con in all_convos:
 	if (len(nameList) == 2): #weeds out the group chats
 		name = ""
 		for name_ in nameList : 
-			if name_ != targetName: 
-				name = name_
-				convos[name_] = [] #names the converstation for who is the other person
+			name_processed = name_.replace('@facebook.com', '')
+			if name_processed != clientName and name_processed != clientID: 
+				name = name_processed
+				convos[name_processed] = [] #names the converstation for who is the other person
 
 		messages = con.find_all('div', class_="message")
 		for msg in messages: 
 			msgDic = {}
-			user = msg.find('span', class_="user").contents[0] #gets the sender of the specific message
-			if user == targetName : 
+			user = msg.find('span', class_="user").contents[0].replace('@facebook.com', '') #gets the sender of the specific message
+			if user == clientName or user == clientID: 
 				msgDic["isMe"] = True 
 			else: 
 				msgDic["isMe"] = False 
