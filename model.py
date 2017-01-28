@@ -53,16 +53,22 @@ def seq2seq_buckets(forward_pass):
 				outputs[bucket][i] = tf.matmul(output, output_projection[0])+output_projection[1] ##Multiplies output by weight and biases of projection
 	return outputs, states
 outputs, states = seq2seq_buckets(True)
+
 train_ops = []
 for bucket in range(len(BUCKETS)):
 	train_ops.append(tf.train.AdamOptimizer(1e-4).minimize(states[bucket]))
+saver = tf.train.Saver()
+
+
 feed_dict = {}
 for i in range(5):
 	feed_dict[encoder_inputs[i].name] = np.array([i])
 for i in range(11):	
 	feed_dict[decoder_inputs[i].name] = np.array([i])
 	feed_dict[target_weights[i].name] = np.array([i])
+
 sess=tf.Session()
+
 sess.run(tf.global_variables_initializer())
 sess.run(train_ops[0], feed_dict=feed_dict)
 for i in range(100):
@@ -71,7 +77,4 @@ for i in range(100):
 output = sess.run(outputs[0], feed_dict=feed_dict)
 sentence = [int(np.argmax(i, axis=1)) for i in output]
 print(sentence)
-
-#for bucket in range(len(BUCKETS))
-#	trains_ops.append(tf.train.AdamOptimizer(1e-4).minimize(losses[bucket])
-
+save_path = saver.save(sess, "model.ckpt")

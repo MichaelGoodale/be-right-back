@@ -82,6 +82,8 @@ celerybeat-schedule
 venv/
 ENV/
 
+.swp
+.model.ckpt.*
 # Spyder project settings
 .spyderproject
 
