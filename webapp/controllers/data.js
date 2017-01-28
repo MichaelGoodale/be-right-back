@@ -27,10 +27,10 @@ module.exports.controller = function (objects) {
 				function (err) {
 					if (err) {
 						console.error(err);
-						res.send({ success: false, message: err });
+						return res.send({ success: false, message: err });
 					}
 
-					res.send({ success: true, message: '' });
+					return res.send({ success: true, message: '' });
 			});
 		});
 
