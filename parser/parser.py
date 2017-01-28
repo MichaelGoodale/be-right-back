@@ -1,5 +1,9 @@
 from bs4 import BeautifulSoup
 import sys
+import pprint 
+
+
+
 
 targetName = "Aidon Lebar"
 
@@ -10,6 +14,7 @@ messageFile = open("messages.htm", "r").read()
 soup = BeautifulSoup(messageFile, "html.parser")
 
 all_convos = soup.find_all('div',class_="thread")
+
 #finds all conversations, called threads by facebook
 for con in all_convos:
 	conName = con.find(text = True) #gets names of convo participants
@@ -40,14 +45,9 @@ for con in all_convos:
 			#put contents of the message as a string in proper dictionary field
 			i += 1
  
+			convos[name] = [msgDic] + convos[name] 
+		
+		
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(convos)		
 
-		print msgDic
-		convos[name].append(msgDic)
-
-
-
-
-	
-
-
-#print(test[])
