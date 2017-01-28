@@ -2,10 +2,9 @@ import pandas as pd
 import nltk
 #SPECIAL VOCABULARY
 
-VECTOR_SIZE = 100
-_PAD = np.ones(VECTOR_SIZE)
-_EOS = np.zeros(VECTOR_SIZE)
-_UNK = np.ones(VECTOR_SIZE)*3
+PAD = 0
+EOS = 1
+UNK = 2
 VOCAB_SIZE = 400000+3 #SIZE of GloVe Corpus and special vocab
 
 def tokenize_sentence(sentence):
@@ -26,4 +25,4 @@ def tokenize_sentence(sentence):
 def get_training_batch(VECTOR_SIZE, BATCH_SIZE):
 	
 	return np.zeros
-	
+
