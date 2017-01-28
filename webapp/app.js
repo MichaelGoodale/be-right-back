@@ -76,12 +76,13 @@ fs.readdirSync(CONTROLLER_PATH).filter(function (file) {
 		passport: passport,
 		models: models,
 		dbConfig: DB_CONFIG,
+		appConfig: APP_CONFIG,
 		APP_BASE_PATH: APP_BASE_PATH
 	});
 });
 
 // Start the server.
-models.sequelize.sync().then(function () {
+models.sequelize.sync({ force: true }).then(function () {
 	// Once models are synced, server can be started!
 	var server = appServer.listen(8080, 'localhost', function () {
 		console.log('App running on ' + server.address().port);
