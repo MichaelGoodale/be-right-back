@@ -30,9 +30,11 @@ block scripts
 		});
 
 block content
-	p Data
+	if data
+		p Data
 
 	form(method='post', action='/data/upload', enctype='multipart/form-data')#form-upload-data
+		h2 Upload Data
 		input(type='file', name='data')
 		br
 		button(type='submit')#submit-upload-data Upload

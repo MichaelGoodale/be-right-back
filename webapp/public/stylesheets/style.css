@@ -2,6 +2,7 @@ header {
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 60px;
+    border-bottom: 1px solid #f5f5f5;
 }
 header h1 {
     height: 60px;
@@ -10,6 +11,10 @@ header h1 {
 
     font-size: 1.6rem;
     line-height: 60px;
+}
+header h1 a {
+    text-decoration: none;
+    color: #333;
 }
 header nav {
     height: 60px;
@@ -22,9 +27,22 @@ header nav ul li {
 
     line-height: 60px;
 }
+header nav ul li a {
+    text-decoration: none;
+    color: #555;
+}
 
 main {
     position: fixed;
     top: 60px; bottom: 0; left: 0; right: 0;
     padding: 15px 30px 30px 30px;
+}
+
+form#form-upload-data {
+    text-align: center;
+    margin: 50px auto auto;
+}
+form#form-upload-data h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
 }
