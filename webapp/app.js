@@ -1,5 +1,6 @@
 var http = require('http');
 var fs = require('fs');
+var path = require('path');
 
 var express = require('express');
 var pug = require('pug');
@@ -24,7 +25,8 @@ passport.use(new passportFacebook.Strategy({
 	callbackURL: '/auth/facebook/callback'
 }, function (accessToken, refreshToken, profile, done) {
 	console.log({where: {facebook_id: profile.id}, defaults: {display_name: profile.displayName}}.where);
-	models.User.findOrCreate({where: {facebook_id: profile.id}, defaults: {display_name: profile.displayName}}).spread(function (user, created) {
+	//noinspection JSUnresolvedFunction,JSUnresolvedVariable
+	models.User.findOrCreate({where: {facebook_id: profile.id}, defaults: {display_name: profile.displayName}}).spread(function (user) {
 		done(null, user)
 	});
 	// FIND OR CREATE USER!!!
@@ -42,12 +44,14 @@ var sessionMiddleware = session({
 
 // Set up views.
 app.set('view engine', 'pug');
-app.set('views', APP_BASE_PATH + '/views');
+app.set('views', path.join(APP_BASE_PATH, 'views'));
 
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/bower_components', express.static(path.join(APP_BASE_PATH, 'bower_components')));
+app.use(express.static(path.join(APP_BASE_PATH, 'public')));
 app.use('/', appRouter);
 
 // Convert a user object to its serialized form.
