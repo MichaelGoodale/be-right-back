@@ -1,0 +1,16 @@
+{
+  "development": {
+    "database": "brbapp",
+    "username": "brbapp",
+    "password": "",
+    "host": "",
+    "port": ""
+  },
+  "production": {
+    "database": "brbapp",
+    "username": "brbapp",
+    "password": "",
+    "host": "",
+    "port": ""
+  }
+}
