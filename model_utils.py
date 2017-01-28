@@ -5,7 +5,7 @@ import nltk
 PAD = 0
 EOS = 1
 UNK = 2
-VOCAB_SIZE = 400000+3 #SIZE of GloVe Corpus and special vocab
+VOCAB_SIZE = 4000+3 #SIZE of GloVe Corpus and special vocab
 
 def tokenize_sentence(sentence):
 	tokens = nltk.word_tokenize(sentence)
