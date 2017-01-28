@@ -10,7 +10,8 @@ header h1 {
     float: left;
 
     font-size: 1.6rem;
-    line-height: 60px;
+    font-family: "Playfair Display", serif;
+    line-height: 56px;
 }
 header h1 a {
     text-decoration: none;
@@ -19,6 +20,7 @@ header h1 a {
 header nav {
     height: 60px;
     float: right;
+    padding-right: 10px;
 }
 header nav ul li {
     display: inline-block;
@@ -30,6 +32,14 @@ header nav ul li {
 header nav ul li a {
     text-decoration: none;
     color: #555;
+    font-family: "Open Sans", sans-serif;
+    font-size: 0.9rem;
+
+    transition: color 0.1s;
+}
+header nav ul li a:hover {
+    color: #333;
+    transition: color 0.1s;
 }
 
 main {
