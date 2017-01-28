@@ -21,6 +21,7 @@
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "pg": "^6.1.2",
+    "pug": "^2.0.0-beta9",
     "sequelize": "^3.30.0"
   }
 }
