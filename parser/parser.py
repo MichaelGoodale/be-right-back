@@ -10,7 +10,7 @@ import facebook
 config_data_json = open('../webapp/config/app.json').read()
 config_data = json.loads(config_data_json)
 
-graph = facebook.GraphAPI(access_token=config_data['FACEBOOK_PAGE_ACCESS_TOKEN'], version='2.8');
+graph = facebook.GraphAPI(access_token=config_data['FACEBOOK_PAGE_ACCESS_TOKEN'], version='2.7');
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -50,7 +50,10 @@ for con in all_convos:
 		for name_ in nameList :
 			name_processed = name_.replace('@facebook.com', '')
 			if name_processed.isdigit():
-				name_processed = graph.get_object(id=name_processed)["name"]
+				try:
+					name_processed = graph.get_object(id=name_processed)["name"]
+				except:
+					pass
 			if name_processed != clientName and name_processed != clientID:
 				name = name_processed
 				convos[name_processed] = [] #names the converstation for who is the other person

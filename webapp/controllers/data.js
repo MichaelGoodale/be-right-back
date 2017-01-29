@@ -14,6 +14,10 @@ module.exports.controller = function (objects) {
 	});
 
 	objects.router.post('/data/upload', function (req, res) {
+		if (!req.isAuthenticated()) {
+			return res.redirect('/');
+		}
+
 		var form = new formidable.IncomingForm();
 		form.parse(req);
 
@@ -37,11 +41,14 @@ module.exports.controller = function (objects) {
 					fs.createReadStream(path.join(objects.APP_BASE_PATH, 'uploads', newFileName)).pipe(unzip.Extract({
 						path: path.join(objects.APP_BASE_PATH, 'uploads', 'output', newFileName.slice(0, -4))
 					})).on('close', function () {
-						var parseMessages = spawn('python', ['../../parser/parser.py']);
+						var parseMessages = spawn('python3', [path.join(objects.APP_BASE_PATH, '..', 'parser', 'parser.py')]);
 						var conversationDataString = '';
 
 						parseMessages.stdout.on('data', function (data) {
 							conversationDataString += data.toString();
+						});
+						parseMessages.stderr.on('data', function (data) {
+							console.log('Python Error: ' + data);
 						});
 
 						parseMessages.stdout.on('end', function () {
