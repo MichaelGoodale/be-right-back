@@ -111,7 +111,7 @@ module.exports.controller = function(objects) {
 							if (user) {
 								request({
 									uri: 'http://159.203.4.104/',
-									qs: { sentence: event.message },
+									qs: { sentence: event.message.text },
 									method: 'GET'
 								}, function (err, response, body) {
 									sendMessage(senderId, body);
