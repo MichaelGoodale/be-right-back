@@ -51,6 +51,8 @@ main {
 	top: 60px; bottom: 0; left: 0; right: 0;
 	padding: 15px 30px 30px 30px;
 	font-family: "Open Sans", sans-serif;
+
+	overflow-y: auto;
 }
 
 form#form-upload-data {
