@@ -3,6 +3,12 @@ module.exports.controller = function (objects) {
 	objects.router.get('/auth/facebook/callback', objects.passport.authenticate('facebook', { successRedirect: '/data',
 			failureRedirect: '/' }));
 
+	objects.router.get('/oauth', function (req, res) {
+		return res.json({
+
+		});
+	});
+
 	objects.router.get('/authenticated', function (req, res) {
 
 	});

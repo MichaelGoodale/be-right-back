@@ -50,7 +50,7 @@ module.exports.controller = function(objects) {
 						id: recipientId
 					},
 					setting_type : "account_linking",
-					account_linking_url : "https://brb.dlougheed.com/auth/messenger/?client_id=" + recipientId
+					account_linking_url : "https://brb.dlougheed.com/oauth?client_id=" + recipientId
 				}
 			}, function (err, response, body) {
 				if (err || response.statusCode !== 200) {
