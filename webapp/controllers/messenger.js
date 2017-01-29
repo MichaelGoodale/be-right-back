@@ -47,7 +47,7 @@ module.exports.controller = function(objects) {
 				method: 'POST',
 				json: {
 					setting_type : "account_linking",
-					account_linking_url : "https://brb.dlougheed.com/auth/facebook?client_id=" + recipientId
+					account_linking_url : "https://brb.dlougheed.com/auth/messenger?client_id=" + recipientId
 				}
 			}, function (err, response, body) {
 				if (err || response.statusCode !== 200) {
@@ -70,7 +70,7 @@ module.exports.controller = function(objects) {
 								buttons: [
 									{
 										type: 'account_link',
-										url: 'https://brb.dlougheed.com/auth/facebook'
+										url: 'https://brb.dlougheed.com/auth/messenger'
 									}
 								]
 							}
