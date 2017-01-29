@@ -1,5 +1,8 @@
 module.exports.controller = function (objects) {
-	objects.router.get('/auth/facebook', objects.passport.authenticate('facebook'));
+	objects.router.get('/auth/facebook', function (req, res, next) {
+		console.log(req.query);
+		objects.passport.authenticate('facebook', { callbackURL: '/auth/facebook/callback' })(req, res, next);
+	});
 	objects.router.get('/auth/facebook/callback', function (req, res, next) {
 		objects.passport.authenticate('facebook', function (err, user, info) {
 			if (err) { return next(err); }
