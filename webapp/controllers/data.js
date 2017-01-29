@@ -10,9 +10,9 @@ module.exports.controller = function (objects) {
 			return res.redirect('/');
 		}
 
-		objects.models.Conversation.find({ where: { OwnerId: req.user.id }, attributes: ['other_name'] }).then(function (conversations) {
+		objects.models.Conversation.findAll({ where: { OwnerId: req.user.id }, attributes: ['other_name'] }).then(function (conversations) {
 			if (conversations != null && conversations.length > 0) {
-				return res.render('data', {user: req.user.toJSON(), conversations: conversations.toJSON()});
+				return res.render('data', {user: req.user.toJSON(), conversations: JSON.parse(JSON.stringify(conversations))});
 			} else {
 				return res.render('data', {user: req.user.toJSON()});
 			}

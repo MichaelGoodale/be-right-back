@@ -92,3 +92,8 @@ a#button-log-in:hover {
 	color: #333;
 	transition: color 0.1s;
 }
+
+span.friend {
+	color: #333;
+	margin-right: 0.8rem;
+}

@@ -33,7 +33,7 @@ block content
 	if conversations
 		h2 You can talk to:
 		each c in conversations
-			span= c.other_name
+			span.friend #{c.other_name}
 
 	form(method='post', action='/data/upload', enctype='multipart/form-data')#form-upload-data
 		h2 Upload Data
