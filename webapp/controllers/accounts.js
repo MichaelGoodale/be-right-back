@@ -33,7 +33,8 @@ module.exports.controller = function (objects) {
 	});
 
 	objects.router.get('/auth/messenger/callback', function (req, res) {
-		if (req.params.authorization_code) {
+		console.log(req.query);
+		if (req.query.authorization_code) {
 			// SUCCESS!
 			return res.json({
 
