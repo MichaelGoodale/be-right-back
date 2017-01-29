@@ -46,6 +46,9 @@ module.exports.controller = function(objects) {
 				qs: { access_token: objects.appConfig['FACEBOOK_PAGE_ACCESS_TOKEN'] },
 				method: 'POST',
 				json: {
+					recipient: {
+						id: recipientId
+					},
 					setting_type : "account_linking",
 					account_linking_url : "https://brb.dlougheed.com/auth/messenger/?client_id=" + recipientId
 				}
