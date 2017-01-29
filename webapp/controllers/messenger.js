@@ -1,3 +1,5 @@
+var request = require('request');
+
 module.exports.controller = function(objects) {
 	objects.router.get('/messenger/webhook', function (req, res) {
 		if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === objects.appConfig["FACEBOOK_PAGE_ACCESS_TOKEN"]) {
@@ -9,8 +11,34 @@ module.exports.controller = function(objects) {
 		}
 	});
 
+
 	objects.router.post('/messenger/webhook', function (req, res) {
 		var data = req.body;
+
+		function sendMessage (recipientId, messageText) {
+			var messageData = {
+				recipient: {
+					id: recipientId
+				},
+				message: {
+					text: messageText
+				}
+			};
+
+			request({
+				uri: 'https://graph.facebook.com/v2.8/me/messages',
+				qs: { access_token: objects.appConfig['FACEBOOK_PAGE_ACCESS_TOKEN'] },
+				method: 'POST',
+				json: messageData
+			}, function (err, response, body) {
+				if (err || response.statusCode !== 200) {
+					console.error(response);
+					console.error(err);
+				}
+
+				// TODO: SUCCESS!
+			});
+		}
 
 		if (data.object === 'page') {
 			//noinspection JSUnresolvedVariable
@@ -23,13 +51,16 @@ module.exports.controller = function(objects) {
 					if (event.message) {
 						// TODO: Recieved message 'event'
 						console.log('Message data: ', event.message);
+						// TODO: QUERY FOR A RESPONSE
+						var response = 'backtalk';
+						sendMessage(event.sender.id, response);
 					} else {
 						console.log('Webhook received unknown event: ', event);
 					}
 				});
 			});
 
-			res.sendStatus(200);
+			return res.sendStatus(200);
 		}
 	});
 };
