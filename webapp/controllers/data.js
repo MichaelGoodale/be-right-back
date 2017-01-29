@@ -2,6 +2,7 @@ var formidable = require('formidable');
 var path = require('path');
 var fs = require('fs');
 var unzip = require('unzip2');
+var spawn = require('child_process').spawn;
 
 module.exports.controller = function (objects) {
 	objects.router.get('/data', function (req, res) {
@@ -36,7 +37,34 @@ module.exports.controller = function (objects) {
 					fs.createReadStream(path.join(objects.APP_BASE_PATH, 'uploads', newFileName)).pipe(unzip.Extract({
 						path: path.join(objects.APP_BASE_PATH, 'uploads', 'output', newFileName.slice(0, -4))
 					})).on('close', function () {
-						return res.send({success: true, message: ''});
+						var parseMessages = spawn('python', [newFileName.slice(0, -4)]);
+						var conversationDataString = '';
+
+						parseMessages.stdout.on('data', function (data) {
+							conversationDataString += data.toString();
+						});
+
+						parseMessages.stdout.on('end', function () {
+							var conversationData = JSON.parse(conversationDataString);
+							for (var name in conversationData) {
+								if (conversationData.hasOwnProperty(name)) {
+									objects.models.Conversation.create({
+										messages: conversationData
+									}).then(function (conversation) {
+										conversation.setOwner(req.user).then(function () {
+											return res.send({success: true, message: ''});
+										});
+									});
+								}
+							}
+						});
+
+						var toSend = req.user.toJSON();
+						toSend["path"] = path.join(objects.APP_BASE_PATH, 'uploads', 'output',
+							newFileName.slice(0, -4), 'html', 'messages.htm');
+
+						parseMessages.stdin.write(JSON.stringify(toSend));
+						parseMessages.stdin.end();
 					});
 				}
 			);
