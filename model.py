@@ -63,7 +63,7 @@ class Conversation_Model(object):
 		self.saver = tf.train.Saver()
 
 	def step(self, i, session, give_outs, batch_size):
-		encoder_inputs, decoder_inputs, target_weights, bucket_id, reset_epoch = model_utils.get_training_batch(i,batch_size)
+		encoder_inputs, decoder_inputs, target_weights, bucket_id, reset_epoch = model_utils.get_training_batch(i)
 		if encoder_inputs == []:
 			return True
 		feed_dict = {}

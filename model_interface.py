@@ -5,7 +5,7 @@ sess = tf.Session()
 conv_model.saver.restore(sess, './the-model')
 
 def get_reply(sentence):
-	sentence_arr = conv_model.inference(sentence, sess))
+	sentence_arr = conv_model.inference(sentence, sess)
 	return ' '.join(sentence_arr)
 
 
