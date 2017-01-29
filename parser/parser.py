@@ -1,14 +1,23 @@
 from bs4 import BeautifulSoup
 import sys, json
-import pprint
-import re 
+import pprint 
+import re
+
+
+#### TESTING GRAPH API~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import facebook
+
+graph = facebook.GraphAPI(access_token='MY ACCESS TOKEN', version='2.7'); 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 #input facebook ID number and display name
 def read_in():
 	lines = sys.stdin.readlines()
 	return json.loads(lines[0])
 
-# example input: { "facebook_id": "100000757823244", "display_name": "Aidon Lebar", "path": "/Users/Aidon/Documents/Be_Right_Back/messages.htm" }
+# example input: { "facebook_id": "100000757823244", "display_name": "Aidon Lebar", "path": "/home/gndowns/McHacks17/messages.htm" }
 userIn = read_in() # format: { facebook_id: '348264782638746', display_name: 'David Lougheed', 'BRB/path/messages.htm' }
 
 clientName = userIn["display_name"]
@@ -16,6 +25,8 @@ clientID = userIn["facebook_id"]
 path = userIn["path"]
 
 convos = {}
+
+
 
 messageFile = open(path, "r").read()
 
@@ -35,6 +46,8 @@ for con in all_convos:
 		name = ""
 		for name_ in nameList : 
 			name_processed = name_.replace('@facebook.com', '')
+			if name_processed.isdigit(): 
+				name_processed = graph.get_object(id=name_processed)["name"]
 			if name_processed != clientName and name_processed != clientID: 
 				name = name_processed
 				convos[name_processed] = [] #names the converstation for who is the other person
@@ -90,6 +103,6 @@ for con in all_convos:
 			
 	
 #prints as a happy little json object thing
-print(json.dumps(convos))
+print(json.dumps(convos, sort_keys=True)); 
 sys.stdout.flush()
 sys.exit(0)
