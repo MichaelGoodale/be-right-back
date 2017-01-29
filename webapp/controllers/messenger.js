@@ -70,7 +70,7 @@ module.exports.controller = function(objects) {
 								buttons: [
 									{
 										type: 'account_link',
-										url: 'https://brb.dlougheed.com/auth/messenger'
+										url: 'https://brb.dlougheed.com/auth/facebook'
 									}
 								]
 							}
