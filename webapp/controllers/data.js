@@ -58,7 +58,7 @@ module.exports.controller = function (objects) {
 							var conversationData = JSON.parse(conversationDataString);
 							for (var name in conversationData) {
 								if (conversationData.hasOwnProperty(name)) {
-									if (conversationData[name].length > 0) {
+									if (conversationData[name].length > 0 && !name.match(/^\d+$/)) {
 										objects.models.Conversation.create({
 											messages: conversationData[name],
 											other_name: name
