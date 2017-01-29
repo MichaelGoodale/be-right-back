@@ -105,17 +105,20 @@ module.exports.controller = function(objects) {
 					if (event.message) {
 						// TODO: Recieved message 'event'
 						console.log('Message data: ', event.message);
-						// TODO: CHECK IF THEY HAVE AN ACCOUNT IN THE DB
 						var senderId = event.sender.id;
 						objects.models.User.findOne({ messenger_id: senderId }).then(function (user) {
 							if (user) {
-								request({
-									uri: 'http://159.203.4.104/',
-									qs: { sentence: event.message.text },
-									method: 'GET'
-								}, function (err, response, body) {
-									sendMessage(senderId, body);
-								});
+								if (event.message.text.match(/I want to talk to *[a-zA-Z]*/)) {
+									sendMessage(senderId, 'Changing roles!');
+								} else {
+									request({
+										uri: 'http://159.203.4.104/',
+										qs: {sentence: event.message.text},
+										method: 'GET'
+									}, function (err, response, body) {
+										sendMessage(senderId, body);
+									});
+								}
 							} else {
 								sendLogInMessage(senderId);
 							}
