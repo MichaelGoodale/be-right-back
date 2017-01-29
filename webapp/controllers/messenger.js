@@ -66,7 +66,7 @@ module.exports.controller = function(objects) {
 							type: 'template',
 							payload: {
 								template_type: 'button',
-								text: 'Log In!',
+								text: 'Please log in to use the bot!',
 								buttons: [
 									{
 										type: 'account_link',
@@ -90,7 +90,7 @@ module.exports.controller = function(objects) {
 					}
 
 					console.log(body);
-				})
+				});
 			});
 		}
 

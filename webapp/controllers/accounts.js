@@ -3,14 +3,41 @@ module.exports.controller = function (objects) {
 	objects.router.get('/auth/facebook/callback', objects.passport.authenticate('facebook', { successRedirect: '/data',
 			failureRedirect: '/' }));
 
-	objects.router.get('/auth/messenger', function (req, res) {
+	objects.router.get('/auth/messenger', objects.passport.authenticate('facebook'), function (req, res) {
+		if (req.isAuthenticated()) {
+			request({
+				uri: 'https://graph.facebook.com/v2.8/me',
+				qs: {
+					access_token: objects.appConfig['FACEBOOK_PAGE_ACCESS_TOKEN'],
+					fields: 'recipient',
+					account_linking_token: req.params.account_linking_token
+				},
+				method: 'POST'
+			}, function (err, response, body) {
+				if (err || response.statusCode !== 200) {
+					console.error(response);
+					console.error(err);
+				}
 
+				req.user.messenger_id = body.recipient;
+				req.user.save();
+
+				return res.redirect(req.params.redirect_uri + '?authorization_code=y');
+			});
+		} else {
+			return res.redirect(req.params.redirect_uri);
+		}
 	});
 
 	objects.router.get('/auth/messenger/callback', function (req, res) {
-		return res.json({
+		if (req.params.authorization_code) {
+			// SUCCESS!
+			return res.json({
 
-		});
+			});
+		} else {
+
+		}
 	});
 
 	objects.router.get('/authenticated', function (req, res) {
