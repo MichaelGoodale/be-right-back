@@ -85,4 +85,10 @@ a#button-log-in {
 	text-decoration: none;
 	color: #555;
 	margin: 60px auto auto;
+
+	transition: color 0.1s;
+}
+a#button-log-in:hover {
+	color: #333;
+	transition: color 0.1s;
 }
