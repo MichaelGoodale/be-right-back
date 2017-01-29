@@ -51,6 +51,7 @@ module.exports.controller = function(objects) {
 					if (event.message) {
 						// TODO: Recieved message 'event'
 						console.log('Message data: ', event.message);
+						// TODO: CHECK IF THEY HAVE AN ACCOUNT IN THE DB
 						// TODO: QUERY FOR A RESPONSE
 						var response = 'backtalk';
 						sendMessage(event.sender.id, response);

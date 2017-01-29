@@ -2,7 +2,7 @@
 
 module.exports = function (sequelize, Sequelize) {
 	var Conversation = sequelize.define('Conversation', {
-		messages: Sequelize.JSONB
+		messages: Sequelize.JSON
 	}, {
 		classMethods: {
 			associate: function (models) {
