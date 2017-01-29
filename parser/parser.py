@@ -44,7 +44,7 @@ for con in all_convos:
 		for i,msg in enumerate(messages):
 		
 			user = messages[i].find('span', class_="user").contents[0].replace('@facebook.com', '') 
-			content = ' '.join(message_contents[j].contents)
+			content = ' '.join(message_contents[j].contents).replace("\n", "").replace("\"", "").replace("/", "").replace("_", "")
 			j += 1
 		
 		
