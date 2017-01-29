@@ -55,6 +55,11 @@ main {
 	overflow-y: auto;
 }
 
+main h2 {
+	font-size: 1.6rem;
+	margin-bottom: 10px;
+}
+
 form#form-upload-data {
 	text-align: center;
 	margin: 50px auto auto;
@@ -96,4 +101,5 @@ a#button-log-in:hover {
 span.friend {
 	color: #333;
 	margin-right: 0.8rem;
+	line-height: 1.3rem;
 }
