@@ -1,7 +1,13 @@
 module.exports.controller = function (objects) {
 	objects.router.get('/auth/facebook', function (req, res, next) {
 		console.log(req.query);
-		objects.passport.authenticate('facebook', { callbackURL: '/auth/facebook/callback' })(req, res, next);
+		var callbackURL = '/auth/facebook/callback';
+
+		if (req.query.account_linking_token) {
+			callbackURL += '?account_linking_token=' + req.query.account_linking_token + '&redirect_uri=' + req.query.redirect_uri;
+		}
+
+		objects.passport.authenticate('facebook', { callbackURL: callbackURL })(req, res, next);
 	});
 	objects.router.get('/auth/facebook/callback', function (req, res, next) {
 		objects.passport.authenticate('facebook', function (err, user, info) {
