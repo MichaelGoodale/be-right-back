@@ -40,6 +40,25 @@ module.exports.controller = function(objects) {
 			});
 		}
 
+		function sendLogInMessage (recipientId) {
+			request({
+				uri: 'https://graph.facebook.com/v2.8/me/thread_settings',
+				qs: { access_token: objects.appConfig['FACEBOOK_PAGE_ACCESS_TOKEN'] },
+				method: 'POST',
+				json: {
+					setting_type : "account_linking",
+					account_linking_url : "https://brb.dlougheed.com/auth/messenger/?client_id=" + recipientId
+				}
+			}, function (err, response, body) {
+				if (err || response.statusCode !== 200) {
+					console.error(response);
+					console.error(err);
+				}
+
+				console.log(body);
+			})
+		}
+
 		if (data.object === 'page') {
 			//noinspection JSUnresolvedVariable
 			data.entry.forEach(function (entry) {
@@ -53,13 +72,13 @@ module.exports.controller = function(objects) {
 						console.log('Message data: ', event.message);
 						// TODO: CHECK IF THEY HAVE AN ACCOUNT IN THE DB
 						var senderId = event.sender.id;
-						objects.models.User.findOne({ facebook_id: senderId }).then(function (user) {
+						objects.models.User.findOne({ messenger_id: senderId }).then(function (user) {
 							if (user) {
 								// TODO: QUERY FOR A RESPONSE
 								var response = 'backtalk';
 								sendMessage(senderId, response);
 							} else {
-								sendMessage(senderId, 'You must have an account to talk!');
+								sendLogInMessage(senderId);
 							}
 						});
 					} else {
