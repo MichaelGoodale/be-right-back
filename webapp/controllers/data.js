@@ -37,7 +37,7 @@ module.exports.controller = function (objects) {
 					fs.createReadStream(path.join(objects.APP_BASE_PATH, 'uploads', newFileName)).pipe(unzip.Extract({
 						path: path.join(objects.APP_BASE_PATH, 'uploads', 'output', newFileName.slice(0, -4))
 					})).on('close', function () {
-						var parseMessages = spawn('python', [newFileName.slice(0, -4)]);
+						var parseMessages = spawn('python', ['../../parser/parser.py']);
 						var conversationDataString = '';
 
 						parseMessages.stdout.on('data', function (data) {
