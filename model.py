@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import model_utils
 
-SIZE = 50
+SIZE = 128
 VOCABULARY_SIZE = model_utils.VOCAB_SIZE
 BATCH_SIZE = 50
 BUCKETS = model_utils.BUCKETS 
@@ -61,10 +61,12 @@ class Conversation_Model(object):
 		else:
 			self.outputs, self.losses = seq2seq_buckets(False)
 			
-		#self.saver = tf.train.Saver()
+		self.saver = tf.train.Saver()
 
 	def step(self, i, session, give_outs):
-		encoder_inputs, decoder_inputs, target_weights, bucket_id = model_utils.get_training_batch(i,10)
+		encoder_inputs, decoder_inputs, target_weights, bucket_id, reset_epoch = model_utils.get_training_batch(i,10)
+		if encoder_inputs == []:
+			return True
 		feed_dict = {}
 		for i in range(BUCKETS[bucket_id][0]):
 			feed_dict[self.encoder_inputs[i].name] = encoder_inputs[i]
@@ -72,19 +74,18 @@ class Conversation_Model(object):
 			feed_dict[self.decoder_inputs[i].name] = decoder_inputs[i]
 			feed_dict[self.target_weights[i].name] = target_weights[i]
 		session.run(self.train_ops[bucket_id], feed_dict=feed_dict)
+		return reset_epoch
 		if give_outs:
-			return session.run(self.outputs[bucket_id],feed_dict=feed_dict)
-print("Loading Model")
-model = Conversation_Model(True)
-sess=tf.Session()
-print("Initialising Variables")
-sess.run(tf.global_variables_initializer())
-print("Training")
-for i in range(10):
-	print(i)
-	model.step(i, sess, False)
-output = model.step(i, sess, True)
-sentence = [int(np.argmax(i, axis=1)) for i in output]
-print(sentence)
-print(model_utils.translate_sentence(sentence))
-
+			return session.run(self.outputs[bucket_id],feed_dict=feed_dict), reset_epoch
+	def inference(self, sentence, session):
+		encoder_inputs, bucket_id = model_utils.get_inf_sentence(sentence)
+		feed_dict={}
+		for i in range(BUCKETS[bucket_id][0]):
+			feed_dict[self.encoder_inputs[i].name] = encoder_inputs[i]
+		for i in range(BUCKETS[bucket_id][1]):
+			feed_dict[self.decoder_inputs[i].name] = np.array([0])
+			feed_dict[self.target_weights[i].name] = np.array([1])
+		outs=session.run(self.outputs[bucket_id], feed_dict=feed_dict)
+		outputs=[int(np.argmax(out,axis=1)) for out in outs]
+		return model_utils.translate_sentence(outputs)
+		

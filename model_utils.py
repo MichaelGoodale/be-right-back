@@ -4,7 +4,7 @@ import sqlite3
 import string
 import numpy as np
 #SPECIAL VOCABULARY
-BUCKETS = [(5,10),(20,30)]
+BUCKETS = [(10,15),(20,30),(30,40)]
 GO = np.array([1],dtype=np.int32)
 PAD = np.array([0],dtype=np.int32)
 EOS = np.array([0],dtype=np.int32)
@@ -38,11 +38,36 @@ def translate_sentence(sentence):
 		else:
 			trans_sentence.append(word[0])
 	return trans_sentence
+
+def get_inf_sentence(sentence):
+	sentence = tokenize_sentence(sentence)
+	bucket_id = 0 
+	for i in range(len(BUCKETS)):
+		if len(sentence) <= BUCKETS[bucket_id][0]:
+			break
+		else: 
+			bucket_id = i+1
+	if bucket_id >= len(BUCKETS): bucket_id = len(BUCKETS)-1
+	if len(sentence) > BUCKETS[bucket_id][0]:
+		sentence = sentence[0:BUCKETS[bucket_id][0]]
+	encode_inputs = sentence
+	en_pad = [PAD]*(BUCKETS[bucket_id][0]-len(sentence))
+	encode_input = list(reversed(encode_inputs+en_pad))
+	return encode_input, bucket_id
+	
 def get_training_batch(step, BATCH_SIZE):
-	speakerOne = c_dialog.execute("SELECT dialog FROM conversation WHERE speaker='0' LIMIT ?",(BATCH_SIZE,))
+	reset_epoch = False
+	speakerOne = c_dialog.execute("SELECT dialog FROM conversation WHERE speaker='0' LIMIT ?,?",(BATCH_SIZE*step,BATCH_SIZE*(step+1)))
 	speakerOneSentences = [tokenize_sentence(i[0]) for i in speakerOne.fetchall()]
-	speakerTwo = c_dialog.execute("SELECT dialog FROM conversation WHERE speaker='1' LIMIT ?",(BATCH_SIZE,))
+	speakerTwo = c_dialog.execute("SELECT dialog FROM conversation WHERE speaker='1' LIMIT ?,?",(BATCH_SIZE*step,BATCH_SIZE*(step+1)))
 	speakerTwoSentences = [tokenize_sentence(i[0]) for i in speakerTwo.fetchall()]
+	if len(speakerOneSentences) != len(speakerTwoSentences) or len(speakerOneSentences)<BATCH_SIZE or len(speakerTwoSentences)<BATCH_SIZE:
+		if len(speakerOneSentences) < len(speakerTwoSentences):
+			speakerTwoSentences=speakerTwoSentences[0:len(speakerOneSentences)]
+		else:
+			speakerOneSentences=speakerOneSentences[0:len(speakerTwoSentences)]
+		reset_epoch = True
+		BATCH_SIZE = len(speakerOneSentences)
 	bucket_id=0
 	encode_inputz = []
 	decode_inputz = []
@@ -74,7 +99,6 @@ def get_training_batch(step, BATCH_SIZE):
 				target_weights.append(np.array([0]))
 			else:
 				target_weights.append(np.array([1]))
-		print(len(encode_input))
 		if len(encode_inputz)==0:
 			encode_inputz = encode_input
 			decode_inputz = decode_input
@@ -85,5 +109,4 @@ def get_training_batch(step, BATCH_SIZE):
 			for i in range(len(decode_input)):
 				decode_inputz[i] = np.concatenate((decode_inputz[i],decode_input[i]))
 				target_weightz[i] = np.concatenate((target_weightz[i],target_weights[i]))
-	return encode_inputz, decode_inputz, target_weightz, bucket_id
-
+	return encode_inputz, decode_inputz, target_weightz, bucket_id, reset_epoch
