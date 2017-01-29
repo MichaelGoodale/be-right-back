@@ -66,7 +66,7 @@ module.exports.controller = function(objects) {
 							type: 'template',
 							payload: {
 								template_type: 'button',
-								text: 'Please log in to use the bot!',
+								text: 'Please log in to use the bot! Make sure to log into the web app itself first.',
 								buttons: [
 									{
 										type: 'account_link',
