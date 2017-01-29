@@ -4,12 +4,12 @@ import sqlite3
 import string
 import numpy as np
 #SPECIAL VOCABULARY
-BUCKETS = [(5,10),(20,30),(40,50)]
-GO = np.array([-1],dtype=np.int32)
+BUCKETS = [(5,10),(20,30),]
+GO = np.array([1],dtype=np.int32)
 PAD = np.array([0],dtype=np.int32)
-EOS = np.array([1],dtype=np.int32)
+EOS = np.array([0],dtype=np.int32)
 UNK = np.array([2],dtype=np.int32)
-VOCAB_SIZE = 4000+3 #SIZE of GloVe Corpus and special vocab
+VOCAB_SIZE = 400000+3 #SIZE of GloVe Corpus and special vocab
 conn = sqlite3.connect("f2db_out.db")
 c = conn.cursor()
 
@@ -24,8 +24,19 @@ def tokenize_sentence(sentence):
 		if word_id is None:
 			sentence.append(UNK)
 		else:
-			sentence.append(np.array(word_id[0]).astype(np.int32))
+			sentence.append(np.array([word_id[0]]).astype(np.int32))
 	return sentence
+
+def translate_sentence(sentence):
+	trans_sentence = []
+	for i in sentence:
+		a = c.execute("SELECT word FROM word_list WHERE id=?", (i, ))
+		word = a.fetchone()
+		if word is None:
+			trans_sentence.append("ERRORWORD")
+		else:
+			trans_sentence.append(word[0])
+	return tran_sentence
 def get_training_batch(i):
 	encode="this is an intro sentence"
 	decode="this is an outro sentence"
@@ -45,11 +56,13 @@ def get_training_batch(i):
 		#TODO make clamp long sentences to max bucket
 	en_pad = [PAD]*(BUCKETS[bucket_id][0]-lengths[0])
 	encode_input = list(reversed(encode_inputs+en_pad))
-	de_pad = [PAD]*(BUCKETS[bucket_id][1]-lengths[1]-1)
+	de_pad = [PAD]*(BUCKETS[bucket_id][1]-lengths[1])
 	decode_input = [GO]+decode_inputs+de_pad
-	target_weights = np.ones([len(decode_input)])
+	target_weights = []
 	for i in range(len(decode_input)):
 		if decode_input[i] == PAD:
-			target_weights[i] = 0
+			target_weights.append(np.array([0]))
+		else:
+			target_weights.append(np.array([1]))
 	return encode_input, decode_input, target_weights, bucket_id
 
