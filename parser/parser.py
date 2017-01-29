@@ -47,6 +47,8 @@ for con in all_convos:
 			user = messages[i].find('span', class_="user").contents[0].replace('@facebook.com', '') 
 			strippedString = ' '.join(message_contents[j].contents).replace("\n", "").replace("\"", "").replace("^", "")
 			strippedString = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'," URL ", strippedString)
+			strippedString = strippedString.replace("/", " ").replace("\r", "").replace("~", "").replace("_", "").replace(")", "").replace("(", "")
+			strippedString = re.sub('\\\\', '', strippedString)
 			content = strippedString
 			j += 1
 		
