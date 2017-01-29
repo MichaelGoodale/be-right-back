@@ -3,7 +3,7 @@ module.exports.controller = function (objects) {
 	objects.router.get('/auth/facebook/callback', objects.passport.authenticate('facebook', { successRedirect: '/data',
 			failureRedirect: '/' }));
 
-	objects.router.get('/auth/messenger', objects.passport.authenticate('facebook'), function (req, res) {
+	objects.router.get('/auth/messenger', function (req, res) {
 		if (req.isAuthenticated()) {
 			request({
 				uri: 'https://graph.facebook.com/v2.8/me',
@@ -26,7 +26,7 @@ module.exports.controller = function (objects) {
 				return res.redirect(req.query.redirect_uri + '&authorization_code=y');
 			});
 		} else {
-			console.log(req.query);
+			console.log('no auth!!!!');
 			// return res.sendStatus(200);
 			return res.redirect(req.query.redirect_uri);
 		}
