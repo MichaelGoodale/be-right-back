@@ -109,9 +109,13 @@ module.exports.controller = function(objects) {
 						var senderId = event.sender.id;
 						objects.models.User.findOne({ messenger_id: senderId }).then(function (user) {
 							if (user) {
-								// TODO: QUERY FOR A RESPONSE
-								var response = 'backtalk';
-								sendMessage(senderId, response);
+								request({
+									uri: 'http://159.203.4.104/',
+									qs: { sentence: event.message },
+									method: 'GET'
+								}, function (err, response, body) {
+									sendMessage(senderId, body);
+								});
 							} else {
 								sendLogInMessage(senderId);
 							}
