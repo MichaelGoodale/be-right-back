@@ -10,7 +10,9 @@ module.exports.controller = function (objects) {
 			return res.redirect('/');
 		}
 
-		return res.render('data', { user: req.user.toJSON() });
+		objects.models.Conversations.find({ where: { OwnerId: req.user.id }, attributes: ['other_name'] }).then(function (conversations) {
+			return res.render('data', { user: req.user.toJSON(), conversations: conversations.toJSON() });
+		});
 	});
 
 	objects.router.post('/data/upload', function (req, res) {
