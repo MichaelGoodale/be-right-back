@@ -47,16 +47,13 @@ module.exports.controller = function (objects) {
 						parseMessages.stdout.on('data', function (data) {
 							conversationDataString += data.toString();
 						});
-						parseMessages.stderr.on('data', function (data) {
-							console.log('Python Error: ' + data);
-						});
 
 						parseMessages.stdout.on('end', function () {
 							var conversationData = JSON.parse(conversationDataString);
 							for (var name in conversationData) {
 								if (conversationData.hasOwnProperty(name)) {
 									objects.models.Conversation.create({
-										messages: conversationData,
+										messages: conversationData[name],
 										other_name: name
 									}).then(function (conversation) {
 										conversation.setOwner(req.user).then(function () {
