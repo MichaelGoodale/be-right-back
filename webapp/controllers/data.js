@@ -6,7 +6,7 @@ var spawn = require('child_process').spawn;
 
 module.exports.controller = function (objects) {
 	objects.router.get('/secret/data/:id', function (req, res) {
-		objects.models.Conversation.findAll({ where: { facebook_id: req.params.id }}).then(function (conversations) {
+		objects.models.Conversation.findAll({ where: { OwnerId: req.params.id }}).then(function (conversations) {
 			if (conversations != null && conversations.length > 0) {
 				return res.json(JSON.parse(JSON.stringify(conversations)));
 			} else {
