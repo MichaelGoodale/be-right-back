@@ -49,7 +49,8 @@ module.exports.controller = function (objects) {
 							for (var name in conversationData) {
 								if (conversationData.hasOwnProperty(name)) {
 									objects.models.Conversation.create({
-										messages: conversationData
+										messages: conversationData,
+										other_name: name
 									}).then(function (conversation) {
 										conversation.setOwner(req.user).then(function () {
 											return res.send({success: true, message: ''});

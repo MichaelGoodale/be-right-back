@@ -2,7 +2,8 @@
 
 module.exports = function (sequelize, Sequelize) {
 	var Conversation = sequelize.define('Conversation', {
-		messages: Sequelize.JSON
+		messages: {type: Sequelize.JSON, allowNull: false},
+		other_name: {type: Sequelize.STRING, allowNull: false}
 	}, {
 		classMethods: {
 			associate: function (models) {

@@ -52,9 +52,16 @@ module.exports.controller = function(objects) {
 						// TODO: Recieved message 'event'
 						console.log('Message data: ', event.message);
 						// TODO: CHECK IF THEY HAVE AN ACCOUNT IN THE DB
-						// TODO: QUERY FOR A RESPONSE
-						var response = 'backtalk';
-						sendMessage(event.sender.id, response);
+						var senderId = event.sender.id;
+						objects.models.User.findOne({ facebook_id: senderId }).then(function (user) {
+							if (user) {
+								// TODO: QUERY FOR A RESPONSE
+								var response = 'backtalk';
+								sendMessage(senderId, response);
+							} else {
+								sendMessage(senderId, 'You must have an account to talk!');
+							}
+						});
 					} else {
 						console.log('Webhook received unknown event: ', event);
 					}
