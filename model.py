@@ -64,7 +64,7 @@ class Conversation_Model(object):
 		#self.saver = tf.train.Saver()
 
 	def step(self, i, session, give_outs):
-		encoder_inputs, decoder_inputs, target_weights, bucket_id = model_utils.get_training_batch(i)
+		encoder_inputs, decoder_inputs, target_weights, bucket_id = model_utils.get_training_batch(i,10)
 		feed_dict = {}
 		for i in range(BUCKETS[bucket_id][0]):
 			feed_dict[self.encoder_inputs[i].name] = encoder_inputs[i]
@@ -83,8 +83,8 @@ print("Training")
 for i in range(10):
 	print(i)
 	model.step(i, sess, False)
-a = model.step(i, sess, True)
-sentence = [int(np.argmax(a, axis=1)) for i in output]
+output = model.step(i, sess, True)
+sentence = [int(np.argmax(i, axis=1)) for i in output]
 print(sentence)
 print(model_utils.translate_sentence(sentence))
 

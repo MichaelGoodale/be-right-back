@@ -4,7 +4,7 @@ import sqlite3
 import string
 import numpy as np
 #SPECIAL VOCABULARY
-BUCKETS = [(5,10),(20,30),]
+BUCKETS = [(5,10),(20,30)]
 GO = np.array([1],dtype=np.int32)
 PAD = np.array([0],dtype=np.int32)
 EOS = np.array([0],dtype=np.int32)
@@ -12,7 +12,8 @@ UNK = np.array([2],dtype=np.int32)
 VOCAB_SIZE = 400000+3 #SIZE of GloVe Corpus and special vocab
 conn = sqlite3.connect("f2db_out.db")
 c = conn.cursor()
-
+conn_dialog = sqlite3.connect("pcorn_out.db")
+c_dialog = conn_dialog.cursor()
 
 def tokenize_sentence(sentence):
 	sentence = sentence.lower().strip().translate(dict.fromkeys(map(ord, string.punctuation)))
@@ -36,33 +37,53 @@ def translate_sentence(sentence):
 			trans_sentence.append("ERRORWORD")
 		else:
 			trans_sentence.append(word[0])
-	return tran_sentence
-def get_training_batch(i):
-	encode="this is an intro sentence"
-	decode="this is an outro sentence"
-	encode_inputs = tokenize_sentence(encode)
-	decode_inputs = tokenize_sentence(decode)
-	lengths = (len(encode_inputs), len(decode_inputs))
-	bucket_id = 0
-	for i in range(len(BUCKETS)):
-		if lengths[0] <= BUCKETS[i][0] and lengths[1] < BUCKETS[i][1]:
-			break
-			print(BUCKETS[i][0])
-			print(BUCKETS[i][1])
-			print(lengths)
-		else: 
-			bucket_id = i+1	
-	#if lengths > bucket_id:
-		#TODO make clamp long sentences to max bucket
-	en_pad = [PAD]*(BUCKETS[bucket_id][0]-lengths[0])
-	encode_input = list(reversed(encode_inputs+en_pad))
-	de_pad = [PAD]*(BUCKETS[bucket_id][1]-lengths[1])
-	decode_input = [GO]+decode_inputs+de_pad
-	target_weights = []
-	for i in range(len(decode_input)):
-		if decode_input[i] == PAD:
-			target_weights.append(np.array([0]))
+	return trans_sentence
+def get_training_batch(step, BATCH_SIZE):
+	speakerOne = c_dialog.execute("SELECT dialog FROM conversation WHERE speaker='0' LIMIT ?",(BATCH_SIZE,))
+	speakerOneSentences = [tokenize_sentence(i[0]) for i in speakerOne.fetchall()]
+	speakerTwo = c_dialog.execute("SELECT dialog FROM conversation WHERE speaker='1' LIMIT ?",(BATCH_SIZE,))
+	speakerTwoSentences = [tokenize_sentence(i[0]) for i in speakerTwo.fetchall()]
+	bucket_id=0
+	encode_inputz = []
+	decode_inputz = []
+	target_weightz = []
+	for j in range(BATCH_SIZE):
+		encode_inputs = speakerOneSentences[j]
+		decode_inputs = speakerTwoSentences[j]
+		lengths = (len(encode_inputs), len(decode_inputs))
+		for i in range(len(BUCKETS)):
+			if lengths[0] <= BUCKETS[bucket_id][0] and lengths[1] < BUCKETS[bucket_id][1]:
+				break
+			else: 
+				bucket_id = i+1
+		if bucket_id >= len(BUCKETS): bucket_id = len(BUCKETS)-1
+		if lengths[0] > BUCKETS[bucket_id][0] or lengths[1] > BUCKETS[bucket_id][1]:
+			speakerOneSentences[j] = speakerOneSentences[j][0:BUCKETS[bucket_id][0]]
+			speakerTwoSentences[j] = speakerTwoSentences[j][0:BUCKETS[bucket_id][1]]		
+	for j in range(BATCH_SIZE):
+		encode_inputs = speakerOneSentences[j]
+		decode_inputs = speakerTwoSentences[j]
+		lengths = (len(encode_inputs), len(decode_inputs))
+		en_pad = [PAD]*(BUCKETS[bucket_id][0]-lengths[0])
+		encode_input = list(reversed(encode_inputs+en_pad))
+		de_pad = [PAD]*(BUCKETS[bucket_id][1]-lengths[1])
+		decode_input = [GO]+decode_inputs+de_pad
+		target_weights = []
+		for i in range(len(decode_input)):
+			if decode_input[i] == PAD:
+				target_weights.append(np.array([0]))
+			else:
+				target_weights.append(np.array([1]))
+		print(len(encode_input))
+		if len(encode_inputz)==0:
+			encode_inputz = encode_input
+			decode_inputz = decode_input
+			target_weightz = target_weights
 		else:
-			target_weights.append(np.array([1]))
-	return encode_input, decode_input, target_weights, bucket_id
+			for i in range(len(encode_input)):
+				encode_inputz[i] = np.concatenate((encode_inputz[i],encode_input[i]))
+			for i in range(len(decode_input)):
+				decode_inputz[i] = np.concatenate((decode_inputz[i],decode_input[i]))
+				target_weightz[i] = np.concatenate((target_weightz[i],target_weights[i]))
+	return encode_inputz, decode_inputz, target_weightz, bucket_id
 
