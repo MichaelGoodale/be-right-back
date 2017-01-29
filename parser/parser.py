@@ -7,15 +7,16 @@ def read_in():
 	lines = sys.stdin.readlines()
 	return json.loads(lines[0])
 
-# example input: { "facebook_id": "100000757823244", "display_name": "Aidon Lebar" }
-userIn = read_in() # format: { facebook_id: '348264782638746', display_name: 'David Lougheed' }
+# example input: { "facebook_id": "100000757823244", "display_name": "Aidon Lebar", "path": "/Users/Aidon/Documents/Be_Right_Back/messages.htm" }
+userIn = read_in() # format: { facebook_id: '348264782638746', display_name: 'David Lougheed', 'BRB/path/messages.htm' }
 
 clientName = userIn["display_name"]
 clientID = userIn["facebook_id"]
+path = userIn["path"]
 
 convos = {}
 
-messageFile = open("messages.htm", "r").read()
+messageFile = open(path, "r").read()
 
 soup = BeautifulSoup(messageFile, "html.parser")
 
@@ -83,9 +84,7 @@ for con in all_convos:
 			#put contents of the message as a string in proper dictionary field
 			
 	
-		
-
-	
-pp = pprint.PrettyPrinter(indent=4)
-pp.pprint(convos)		
-
+#prints as a happy little json object thing
+print(json.dumps(convos))
+sys.stdout.flush()
+sys.exit(0)
