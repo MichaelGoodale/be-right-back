@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import sys, json
-import pprint 
+import pprint
+import re 
 
 #input facebook ID number and display name
 def read_in():
@@ -44,7 +45,9 @@ for con in all_convos:
 		for i,msg in enumerate(messages):
 		
 			user = messages[i].find('span', class_="user").contents[0].replace('@facebook.com', '') 
-			content = ' '.join(message_contents[j].contents).replace("\n", "").replace("\"", "").replace("/", "").replace("_", "")
+			strippedString = ' '.join(message_contents[j].contents).replace("\n", "").replace("\"", "").replace("^", "")
+			strippedString = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'," URL ", strippedString)
+			content = strippedString
 			j += 1
 		
 		
