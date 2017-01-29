@@ -10,7 +10,7 @@ module.exports.controller = function (objects) {
 			return res.redirect('/');
 		}
 
-		objects.models.Conversations.find({ where: { OwnerId: req.user.id }, attributes: ['other_name'] }).then(function (conversations) {
+		objects.models.Conversation.find({ where: { OwnerId: req.user.id }, attributes: ['other_name'] }).then(function (conversations) {
 			return res.render('data', { user: req.user.toJSON(), conversations: conversations.toJSON() });
 		});
 	});
