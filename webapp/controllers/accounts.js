@@ -10,7 +10,7 @@ module.exports.controller = function (objects) {
 				qs: {
 					access_token: objects.appConfig['FACEBOOK_PAGE_ACCESS_TOKEN'],
 					fields: 'recipient',
-					account_linking_token: req.params.account_linking_token
+					account_linking_token: req.query.account_linking_token
 				},
 				method: 'POST'
 			}, function (err, response, body) {
@@ -22,15 +22,13 @@ module.exports.controller = function (objects) {
 				req.user.messenger_id = body.recipient;
 				req.user.save();
 
-				console.log(req.params);
-				return res.sendStatus(200);
-
-				// return res.redirect(req.params.redirect_uri + '?authorization_code=y');
+				console.log(req.query);
+				return res.redirect(req.query.redirect_uri + '?authorization_code=y');
 			});
 		} else {
-			console.log(req.params);
-			return res.sendStatus(200);
-			// return res.redirect(req.params.redirect_uri);
+			console.log(req.query);
+			// return res.sendStatus(200);
+			return res.redirect(req.query.redirect_uri);
 		}
 	});
 
