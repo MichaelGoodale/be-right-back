@@ -2,14 +2,14 @@
   "development": {
     "database": "brbapp",
     "username": "brbapp",
-    "password": "brbapp_dev",
+    "password": "",
     "host": "",
     "port": ""
   },
   "production": {
     "database": "brbapp",
     "username": "brbapp",
-    "password": "brbapp_prod",
+    "password": "",
     "host": "",
     "port": ""
   }
