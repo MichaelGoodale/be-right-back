@@ -11,7 +11,11 @@ module.exports.controller = function (objects) {
 		}
 
 		objects.models.Conversation.find({ where: { OwnerId: req.user.id }, attributes: ['other_name'] }).then(function (conversations) {
-			return res.render('data', { user: req.user.toJSON(), conversations: conversations.toJSON() });
+			if (conversations != null && conversations.length > 0) {
+				return res.render('data', {user: req.user.toJSON(), conversations: conversations.toJSON()});
+			} else {
+				return res.render('data', {user: req.user.toJSON()});
+			}
 		});
 	});
 
