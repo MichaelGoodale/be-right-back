@@ -2,9 +2,8 @@ import tensorflow as tf
 import numpy as np
 import model_utils
 
-SIZE = 128
+SIZE = 64
 VOCABULARY_SIZE = model_utils.VOCAB_SIZE
-BATCH_SIZE = 50
 BUCKETS = model_utils.BUCKETS 
 NUMBER_OF_LAYERS = 2
 NUMBER_OF_SAMPLES = 512 
@@ -63,8 +62,8 @@ class Conversation_Model(object):
 			
 		self.saver = tf.train.Saver()
 
-	def step(self, i, session, give_outs):
-		encoder_inputs, decoder_inputs, target_weights, bucket_id, reset_epoch = model_utils.get_training_batch(i,10)
+	def step(self, i, session, give_outs, batch_size):
+		encoder_inputs, decoder_inputs, target_weights, bucket_id, reset_epoch = model_utils.get_training_batch(i,batch_size)
 		if encoder_inputs == []:
 			return True
 		feed_dict = {}

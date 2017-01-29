@@ -9,8 +9,8 @@ GO = np.array([1],dtype=np.int32)
 PAD = np.array([0],dtype=np.int32)
 EOS = np.array([0],dtype=np.int32)
 UNK = np.array([2],dtype=np.int32)
-VOCAB_SIZE = 400000+3 #SIZE of GloVe Corpus and special vocab
-conn = sqlite3.connect("f2db_out.db")
+VOCAB_SIZE = 10010 #SIZE of GloVe Corpus and special vocab
+conn = sqlite3.connect("word.db")
 c = conn.cursor()
 conn_dialog = sqlite3.connect("pcorn_out.db")
 c_dialog = conn_dialog.cursor()
