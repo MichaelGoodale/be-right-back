@@ -63,13 +63,12 @@ module.exports.controller = function (objects) {
 											messages: conversationData[name],
 											other_name: name
 										}).then(function (conversation) {
-											conversation.setOwner(req.user).then(function () {
-												return res.send({success: true, message: ''});
-											});
+											conversation.setOwner(req.user);
 										});
 									}
 								}
 							}
+							return res.send({success: true, message: ''});
 						});
 
 						var toSend = req.user.toJSON();
