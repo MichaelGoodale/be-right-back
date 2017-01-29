@@ -22,10 +22,10 @@ module.exports.controller = function (objects) {
 				req.user.messenger_id = body.recipient;
 				req.user.save();
 
-				return res.redirect(req.params.redirect_uri + '?authorization_code=y');
+				// return res.redirect(req.params.redirect_uri + '?authorization_code=y');
 			});
 		} else {
-			return res.redirect(req.params.redirect_uri);
+			// return res.redirect(req.params.redirect_uri);
 		}
 	});
 
