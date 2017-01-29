@@ -46,11 +46,8 @@ module.exports.controller = function(objects) {
 				qs: { access_token: objects.appConfig['FACEBOOK_PAGE_ACCESS_TOKEN'] },
 				method: 'POST',
 				json: {
-					recipient: {
-						id: recipientId
-					},
 					setting_type : "account_linking",
-					account_linking_url : "https://brb.dlougheed.com/oauth?client_id=" + recipientId
+					account_linking_url : "https://brb.dlougheed.com/auth/messenger?client_id=" + recipientId
 				}
 			}, function (err, response, body) {
 				if (err || response.statusCode !== 200) {
@@ -59,7 +56,42 @@ module.exports.controller = function(objects) {
 				}
 
 				console.log(body);
-			})
+
+				var messageData = {
+					recipient: {
+						id: recipientId
+					},
+					message: {
+						attachment: {
+							type: 'template',
+							payload: {
+								template_type: 'button',
+								text: 'Log In!',
+								buttons: [
+									{
+										type: 'account_link',
+										url: 'https://brb.dlougheed.com/auth/messenger'
+									}
+								]
+							}
+						}
+					}
+				};
+
+				request({
+					uri: 'https://graph.facebook.com/v2.8/me/messages',
+					qs: { access_token: objects.appConfig['FACEBOOK_PAGE_ACCESS_TOKEN'] },
+					method: 'POST',
+					json: messageData
+				}, function (err, response, body) {
+					if (err || response.statusCode !== 200) {
+						console.error(response);
+						console.error(err);
+					}
+
+					console.log(body);
+				})
+			});
 		}
 
 		if (data.object === 'page') {

@@ -3,7 +3,11 @@ module.exports.controller = function (objects) {
 	objects.router.get('/auth/facebook/callback', objects.passport.authenticate('facebook', { successRedirect: '/data',
 			failureRedirect: '/' }));
 
-	objects.router.get('/oauth', function (req, res) {
+	objects.router.get('/auth/messenger', function (req, res) {
+
+	});
+
+	objects.router.get('/auth/messenger/callback', function (req, res) {
 		return res.json({
 
 		});
